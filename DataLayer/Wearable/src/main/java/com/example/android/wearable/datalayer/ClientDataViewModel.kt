@@ -46,8 +46,8 @@ class ClientDataViewModel(
     application: Application
 ) :
     AndroidViewModel(application),
-    DataClient.OnDataChangedListener,
-    MessageClient.OnMessageReceivedListener,
+    // DataClient.OnDataChangedListener,
+    // MessageClient.OnMessageReceivedListener,
     CapabilityClient.OnCapabilityChangedListener {
 
     private val _events = mutableStateListOf<Event>()
@@ -57,61 +57,7 @@ class ClientDataViewModel(
      */
     val events: List<Event> = _events
 
-    /**
-     * The currently received image (if any), available to display.
-     */
-    var image by mutableStateOf<Bitmap?>(null)
-        private set
 
-    private var loadPhotoJob: Job = Job().apply { complete() }
-
-    @SuppressLint("VisibleForTests")
-    override fun onDataChanged(dataEvents: DataEventBuffer) {
-        // Add all events to the event log
-        _events.addAll(
-            dataEvents.map { dataEvent ->
-                val title = when (dataEvent.type) {
-                    DataEvent.TYPE_CHANGED -> R.string.data_item_changed
-                    DataEvent.TYPE_DELETED -> R.string.data_item_deleted
-                    else -> R.string.data_item_unknown
-                }
-
-                Event(
-                    title = title,
-                    text = dataEvent.dataItem.toString()
-                )
-            }
-        )
-
-        // Do additional work for specific events
-        dataEvents.forEach { dataEvent ->
-            when (dataEvent.type) {
-                DataEvent.TYPE_CHANGED -> {
-                    when (dataEvent.dataItem.uri.path) {
-                        DataLayerListenerService.IMAGE_PATH -> {
-                            loadPhotoJob.cancel()
-                            loadPhotoJob = viewModelScope.launch {
-                                image = loadBitmap(
-                                    DataMapItem.fromDataItem(dataEvent.dataItem)
-                                        .dataMap
-                                        .getAsset(DataLayerListenerService.IMAGE_KEY)
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    override fun onMessageReceived(messageEvent: MessageEvent) {
-        _events.add(
-            Event(
-                title = R.string.message,
-                text = messageEvent.toString()
-            )
-        )
-    }
 
     override fun onCapabilityChanged(capabilityInfo: CapabilityInfo) {
         _events.add(

@@ -27,6 +27,8 @@ import com.google.android.gms.wearable.CapabilityClient
 import com.google.android.gms.wearable.Node
 import com.google.android.gms.wearable.Wearable
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
@@ -44,9 +46,9 @@ class MainActivity : ComponentActivity() {
         setContent {
             MainApp(
                 events = clientDataViewModel.events,
-                image = clientDataViewModel.image,
-                onQueryOtherDevicesClicked = ::onQueryOtherDevicesClicked,
-                onQueryMobileCameraClicked = ::onQueryMobileCameraClicked
+                //image = clientDataViewModel.image,
+                // onQueryOtherDevicesClicked = ::onQueryOtherDevicesClicked,
+                // onQueryMobileCameraClicked = ::onQueryMobileCameraClicked
             )
         }
     }
@@ -57,6 +59,7 @@ class MainActivity : ComponentActivity() {
                 val nodes = getCapabilitiesForReachableNodes()
                     .filterValues { MOBILE_CAPABILITY in it || WEAR_CAPABILITY in it }.keys
                 displayNodes(nodes)
+                sendBpmMessageToMobile(nodes) // !!
             } catch (cancellationException: CancellationException) {
                 throw cancellationException
             } catch (exception: Exception) {
@@ -114,20 +117,34 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        dataClient.addListener(clientDataViewModel)
-        messageClient.addListener(clientDataViewModel)
-        capabilityClient.addListener(
-            clientDataViewModel,
-            Uri.parse("wear://"),
-            CapabilityClient.FILTER_REACHABLE
-        )
+
+
     }
 
     override fun onPause() {
         super.onPause()
-        dataClient.removeListener(clientDataViewModel)
-        messageClient.removeListener(clientDataViewModel)
-        capabilityClient.removeListener(clientDataViewModel)
+
+
+    }
+
+    private fun sendBpmMessageToMobile(nodes: Set<Node>) {
+        var intBpm = 0;
+        lifecycleScope.launch {
+            try {
+                nodes.map { node ->
+                    async {
+                        messageClient.sendMessage(node.id, "", byteArrayOf(intBpm.toByte())) // !!!!!!!!!!!!!!!!!!!!!!!!!!
+                            .await()
+                    }
+                }.awaitAll()
+
+                Log.d(TAG, "Sent BPM successfully")
+            } catch (cancellationException: CancellationException) {
+                throw cancellationException
+            } catch (exception: Exception) {
+                Log.d(TAG, "Sending failed: $exception")
+            }
+        }
     }
 
     companion object {

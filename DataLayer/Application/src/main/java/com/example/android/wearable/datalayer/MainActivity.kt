@@ -176,7 +176,7 @@ class MainActivity : ComponentActivity() {
                 // Send a message to all nodes in parallel
                 nodes.map { node ->
                     async {
-                        messageClient.sendMessage(node.id, START_ACTIVITY_PATH, byteArrayOf())
+                        messageClient.sendMessage(node.id, START_ACTIVITY_PATH, byteArrayOf()) // !!!!!!!!!!!!!!!!!!!!!!!!!!
                             .await()
                     }
                 }.awaitAll()

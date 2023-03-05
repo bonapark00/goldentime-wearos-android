@@ -52,9 +52,9 @@ import androidx.wear.compose.material.rememberScalingLazyListState
 @Composable
 fun MainApp(
     events: List<Event>,
-    image: Bitmap?,
-    onQueryOtherDevicesClicked: () -> Unit,
-    onQueryMobileCameraClicked: () -> Unit
+    // image: Bitmap?,
+    // onQueryOtherDevicesClicked: () -> Unit,
+    // onQueryMobileCameraClicked: () -> Unit
 ) {
     val scalingLazyListState = rememberScalingLazyListState()
 
@@ -70,50 +70,8 @@ fun MainApp(
                 vertical = 32.dp
             )
         ) {
-            item {
-                Button(
-                    onClick = onQueryOtherDevicesClicked,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(text = stringResource(id = R.string.query_other_devices))
-                }
-            }
 
-            item {
-                Button(
-                    onClick = onQueryMobileCameraClicked,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Text(text = stringResource(id = R.string.query_mobile_camera))
-                }
-            }
 
-            item {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(1f)
-                        .padding(32.dp)
-                ) {
-                    if (image == null) {
-                        Image(
-                            painterResource(id = R.drawable.photo_placeholder),
-                            contentDescription = stringResource(
-                                id = R.string.photo_placeholder
-                            ),
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    } else {
-                        Image(
-                            image.asImageBitmap(),
-                            contentDescription = stringResource(
-                                id = R.string.captured_photo
-                            ),
-                            modifier = Modifier.fillMaxSize()
-                        )
-                    }
-                }
-            }
 
             if (events.isEmpty()) {
                 item {
@@ -176,11 +134,9 @@ fun MainAppPreviewEvents() {
                 text = "Event 6"
             )
         ),
-        image = Bitmap.createBitmap(100, 100, Bitmap.Config.ARGB_8888).apply {
-            eraseColor(Color.WHITE)
-        },
-        onQueryOtherDevicesClicked = {},
-        onQueryMobileCameraClicked = {}
+
+        // onQueryOtherDevicesClicked = {},
+        // onQueryMobileCameraClicked = {}
     )
 }
 
@@ -189,8 +145,8 @@ fun MainAppPreviewEvents() {
 fun MainAppPreviewEmpty() {
     MainApp(
         events = emptyList(),
-        image = null,
-        onQueryOtherDevicesClicked = {},
-        onQueryMobileCameraClicked = {}
+        //image = null,
+        // onQueryOtherDevicesClicked = {},
+        // onQueryMobileCameraClicked = {}
     )
 }
