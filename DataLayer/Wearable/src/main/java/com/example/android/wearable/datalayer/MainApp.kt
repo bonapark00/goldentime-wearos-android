@@ -69,7 +69,14 @@ fun MainApp(
                 horizontal = 8.dp,
                 vertical = 32.dp
             )
-        ) {
+        ) {            item {
+            Button(
+                onClick = onQueryDevicesThenSendMessage,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(text = stringResource(id = R.string.query_other_devices))
+            }
+        }
             if (events.isEmpty()) {
                 item {
                     Text(

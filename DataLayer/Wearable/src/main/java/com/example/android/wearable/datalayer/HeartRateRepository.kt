@@ -15,7 +15,6 @@ import kotlinx.coroutines.launch
 
 class HeartRateRepository(context: Context) {
     private val passiveMonitoringClient: PassiveMonitoringClient
-
     init {
         val healthClient = HealthServices.getClient(context)
         passiveMonitoringClient = healthClient.passiveMonitoringClient
