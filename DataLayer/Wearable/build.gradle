@@ -90,4 +90,12 @@ dependencies {
     implementation libs.wear.compose.foundation
 
     implementation libs.playservices.wearable
+
+    implementation 'androidx.core:core-ktx:1.9.0'
+    implementation 'androidx.percentlayout:percentlayout:1.0.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.recyclerview:recyclerview:1.2.1'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'
+    implementation "androidx.health:health-services-client:1.0.0-beta02"
+    implementation "com.google.guava:guava:31.0.1-android"
 }

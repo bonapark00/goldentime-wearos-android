@@ -47,19 +47,25 @@ class MainActivity : ComponentActivity() {
             MainApp(
                 events = clientDataViewModel.events,
                 //image = clientDataViewModel.image,
-                // onQueryOtherDevicesClicked = ::onQueryOtherDevicesClicked,
+                onQueryDevicesThenSendMessage = ::onQueryDevicesThenSendMessage,
                 // onQueryMobileCameraClicked = ::onQueryMobileCameraClicked
             )
         }
+        initialize() // start watching BPM
+
+    }
+    private fun initialize() {
+        val repository = HeartRateRepository(this)
+        repository.startWatching()
     }
 
-    private fun onQueryOtherDevicesClicked() {
+    private fun onQueryDevicesThenSendMessage() {
         lifecycleScope.launch {
             try {
                 val nodes = getCapabilitiesForReachableNodes()
                     .filterValues { MOBILE_CAPABILITY in it || WEAR_CAPABILITY in it }.keys
-                displayNodes(nodes)
-                sendBpmMessageToMobile(nodes) // !!
+                // displayNodes(nodes)
+                sendBpmMessageToMobile(nodes) // !! send message to mobile
             } catch (cancellationException: CancellationException) {
                 throw cancellationException
             } catch (exception: Exception) {
@@ -117,14 +123,10 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-
-
     }
 
     override fun onPause() {
         super.onPause()
-
-
     }
 
     private fun sendBpmMessageToMobile(nodes: Set<Node>) {

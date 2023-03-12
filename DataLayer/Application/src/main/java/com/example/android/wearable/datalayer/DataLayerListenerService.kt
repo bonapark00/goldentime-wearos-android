@@ -51,6 +51,9 @@ class DataLayerListenerService : WearableListenerService() {
                 )
             }
         }
+        *
+        *
+        *
         * */
 
     }

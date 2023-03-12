@@ -53,7 +53,7 @@ import androidx.wear.compose.material.rememberScalingLazyListState
 fun MainApp(
     events: List<Event>,
     // image: Bitmap?,
-    // onQueryOtherDevicesClicked: () -> Unit,
+    onQueryDevicesThenSendMessage: () -> Unit,
     // onQueryMobileCameraClicked: () -> Unit
 ) {
     val scalingLazyListState = rememberScalingLazyListState()
@@ -70,9 +70,6 @@ fun MainApp(
                 vertical = 32.dp
             )
         ) {
-
-
-
             if (events.isEmpty()) {
                 item {
                     Text(
@@ -135,7 +132,7 @@ fun MainAppPreviewEvents() {
             )
         ),
 
-        // onQueryOtherDevicesClicked = {},
+        onQueryDevicesThenSendMessage = {},
         // onQueryMobileCameraClicked = {}
     )
 }
@@ -146,7 +143,7 @@ fun MainAppPreviewEmpty() {
     MainApp(
         events = emptyList(),
         //image = null,
-        // onQueryOtherDevicesClicked = {},
+        onQueryDevicesThenSendMessage = {},
         // onQueryMobileCameraClicked = {}
     )
 }

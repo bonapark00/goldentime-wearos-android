@@ -36,7 +36,7 @@ import com.google.android.gms.wearable.MessageEvent
  */
 class ClientDataViewModel :
     ViewModel(),
-    DataClient.OnDataChangedListener,
+    // DataClient.OnDataChangedListener,
     MessageClient.OnMessageReceivedListener,
     CapabilityClient.OnCapabilityChangedListener {
 
@@ -53,6 +53,7 @@ class ClientDataViewModel :
     var image by mutableStateOf<Bitmap?>(null)
         private set
 
+    /*
     @SuppressLint("VisibleForTests")
     override fun onDataChanged(dataEvents: DataEventBuffer) {
         _events.addAll(
@@ -70,8 +71,9 @@ class ClientDataViewModel :
             }
         )
     }
+    */
 
-    override fun onMessageReceived(messageEvent: MessageEvent) {
+    override fun onMessageReceived(messageEvent: MessageEvent) { // Receive message about BPM
         _events.add(
             Event(
                 title = R.string.message_from_watch,
