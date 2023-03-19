@@ -123,7 +123,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
-        dataClient.addListener(clientDataViewModel)
+        //dataClient.addListener(clientDataViewModel)
         messageClient.addListener(clientDataViewModel)
         capabilityClient.addListener(
             clientDataViewModel,
@@ -146,7 +146,7 @@ class MainActivity : ComponentActivity() {
 
     override fun onPause() {
         super.onPause()
-        dataClient.removeListener(clientDataViewModel)
+        // dataClient.removeListener(clientDataViewModel)
         messageClient.removeListener(clientDataViewModel)
         capabilityClient.removeListener(clientDataViewModel)
 

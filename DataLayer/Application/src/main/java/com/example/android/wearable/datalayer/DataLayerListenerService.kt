@@ -41,6 +41,9 @@ class DataLayerListenerService : WearableListenerService() {
     override fun onMessageReceived(messageEvent: MessageEvent) {
         super.onMessageReceived(messageEvent)
         var intBpmReceived = messageEvent.data
+        Log.d("Mobile", "[DataLayerListenerService] Message received from the watch! ${intBpmReceived.toString()} BPM")
+
+
         /*
         *
         when (messageEvent.path) { // START_ACTIVITY_PATH = "/start-activity"
@@ -51,9 +54,6 @@ class DataLayerListenerService : WearableListenerService() {
                 )
             }
         }
-        *
-        *
-        *
         * */
 
     }

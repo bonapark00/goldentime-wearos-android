@@ -15,8 +15,8 @@
  */
 package com.example.android.wearable.datalayer
 
-import android.annotation.SuppressLint
 import android.graphics.Bitmap
+import android.util.Log
 import androidx.annotation.StringRes
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -25,11 +25,9 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import com.google.android.gms.wearable.CapabilityClient
 import com.google.android.gms.wearable.CapabilityInfo
-import com.google.android.gms.wearable.DataClient
-import com.google.android.gms.wearable.DataEvent
-import com.google.android.gms.wearable.DataEventBuffer
 import com.google.android.gms.wearable.MessageClient
 import com.google.android.gms.wearable.MessageEvent
+
 
 /**
  * A state holder for the client data.
@@ -77,9 +75,14 @@ class ClientDataViewModel :
         _events.add(
             Event(
                 title = R.string.message_from_watch,
-                text = messageEvent.toString()
-            )
+                text = messageEvent.data.toString(Charsets.UTF_8)
+
         )
+        )
+        Log.d("Mobile", "[Client View Model] messageEvent ${messageEvent.toString()} BPM")
+        val stringBPM = messageEvent.data.toString(Charsets.UTF_8)
+        Log.d("Mobile", "[Client View Model] messageEvent.data $stringBPM BPM")
+
     }
 
     override fun onCapabilityChanged(capabilityInfo: CapabilityInfo) {

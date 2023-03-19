@@ -50,6 +50,8 @@ class HealthWatchService : PassiveListenerService() {
     override fun onNewDataPointsReceived(dataPoints: DataPointContainer) {
         dataPoints.getData(DataType.HEART_RATE_BPM).forEach {
             Log.d("HEALTH WATCH", "type : ${it.dataType.name} / value : ${it.value}")
+            Log.d("HEALTH WATCH", "type : ${it.dataType.name} / value : ${it.value}")
+
         }
     }
 }

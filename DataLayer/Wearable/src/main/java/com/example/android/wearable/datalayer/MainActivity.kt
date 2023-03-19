@@ -129,12 +129,12 @@ class MainActivity : ComponentActivity() {
     }
 
     private fun sendBpmMessageToMobile(nodes: Set<Node>) {
-        var intBpm = 0;
+        val stringMessage = "86 bpm";
         lifecycleScope.launch {
             try {
                 nodes.map { node ->
                     async {
-                        messageClient.sendMessage(node.id, "", byteArrayOf(intBpm.toByte())) // !!!!!!!!!!!!!!!!!!!!!!!!!!
+                        messageClient.sendMessage(node.id, "", stringMessage.toByteArray(Charsets.UTF_8)) // !!!!!!!!!!!!!!!!!!!!!!!!!!
                             .await()
                     }
                 }.awaitAll()

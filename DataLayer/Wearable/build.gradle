@@ -27,7 +27,7 @@ android {
         versionCode 1
         versionName "1.0"
 
-        minSdk 26
+        minSdk 30 // changed from 26 to 30
         targetSdk 30
     }
 
