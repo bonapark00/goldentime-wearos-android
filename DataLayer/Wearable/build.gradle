@@ -76,7 +76,6 @@ dependencies {
     implementation libs.compose.foundation
     implementation libs.androidx.lifecycle.viewmodel.compose
     implementation libs.androidx.lifecycle.viewmodel.ktx
-
     // Compose for Wear OS Dependencies
     // Developer Preview currently Alpha 07, with new releases coming soon.
     // NOTE: DO NOT INCLUDE a dependency on androidx.compose.material:material.
@@ -98,4 +97,6 @@ dependencies {
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.5.1'
     implementation "androidx.health:health-services-client:1.0.0-beta02"
     implementation "com.google.guava:guava:31.0.1-android"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.2.0"
+
 }

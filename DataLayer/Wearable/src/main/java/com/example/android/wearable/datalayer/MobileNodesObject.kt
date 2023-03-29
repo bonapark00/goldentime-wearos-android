@@ -1,5 +1,13 @@
 package com.example.android.wearable.datalayer
 
 object MobileNodesObject {
-    var intBPM = 0
+    var doubleBPM = 62.0
+    fun setBPM(newBPM: Double){
+        doubleBPM = newBPM
+    }
+    fun getBPM() : Double{
+        return doubleBPM
+    }
 }
+
+

@@ -16,15 +16,7 @@
 package com.example.android.wearable.datalayer
 
 import android.graphics.Bitmap
-import android.graphics.Color
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asImageBitmap
@@ -34,79 +26,112 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.wear.compose.material.Button
-import androidx.wear.compose.material.Card
-import androidx.wear.compose.material.ExperimentalWearMaterialApi
-import androidx.wear.compose.material.MaterialTheme
-import androidx.wear.compose.material.PositionIndicator
-import androidx.wear.compose.material.Scaffold
-import androidx.wear.compose.material.ScalingLazyColumn
-import androidx.wear.compose.material.Text
-import androidx.wear.compose.material.TimeText
-import androidx.wear.compose.material.Vignette
-import androidx.wear.compose.material.VignettePosition
-import androidx.wear.compose.material.items
-import androidx.wear.compose.material.rememberScalingLazyListState
-
+import androidx.wear.compose.material.*
+import com.example.android.wearable.datalayer.R
+import android.view.animation.Animation;
+import android.view.animation.Animation.AnimationListener;
+import android.view.animation.AnimationUtils;
+import androidx.compose.animation.animateColor
+import androidx.compose.animation.core.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontWeight
 @OptIn(ExperimentalWearMaterialApi::class)
 @Composable
 fun MainApp(
     events: List<Event>,
     // image: Bitmap?,
     onQueryDevicesThenSendMessage: () -> Unit,
+    doubleBPM : Double?
     // onQueryMobileCameraClicked: () -> Unit
 ) {
     val scalingLazyListState = rememberScalingLazyListState()
+    val infiniteTransition = rememberInfiniteTransition()
 
+    // val doubleBPM = MobileNodesObject.getBPM()
     Scaffold(
+        modifier = Modifier.background(Color(0xFFF4DED5)),
         vignette = { Vignette(vignettePosition = VignettePosition.TopAndBottom) },
         positionIndicator = { PositionIndicator(scalingLazyListState = scalingLazyListState) },
         timeText = { TimeText() }
     ) {
+
         ScalingLazyColumn(
             state = scalingLazyListState,
             contentPadding = PaddingValues(
-                horizontal = 8.dp,
-                vertical = 32.dp
-            )
-        ) {            item {
-            Button(
-                onClick = onQueryDevicesThenSendMessage,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(text = stringResource(id = R.string.query_other_devices))
-            }
-        }
-            if (events.isEmpty()) {
-                item {
-                    Text(
-                        stringResource(id = R.string.waiting),
+                horizontal = 18.dp,
+                vertical = 10.dp
+            ),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+
+               item{
+                   HeartbeatAnimation(infiniteTransition)
+
+               }
+
+                item{
+                    Text("Golden Time",
+                        modifier = Modifier.fillMaxWidth().padding(top=20.dp),
+                        textAlign = TextAlign.Center,
+                        //fontWeight = 3
+                        fontWeight = FontWeight.Bold
+                        )
+                }
+                item{
+                    Text("Current BPM: $doubleBPM",
                         modifier = Modifier.fillMaxWidth(),
-                        textAlign = TextAlign.Center
-                    )
+                        textAlign = TextAlign.Center)
                 }
-            } else {
-                items(events) { event ->
-                    Card(
-                        onClick = {},
-                        enabled = false
-                    ) {
-                        Column {
-                            Text(
-                                stringResource(id = event.title),
-                                style = MaterialTheme.typography.title3
-                            )
-                            Text(
-                                event.text,
-                                style = MaterialTheme.typography.body2
-                            )
-                        }
-                    }
+               }
+
+            /*
+             item {
+                Button(
+                    onClick = onQueryDevicesThenSendMessage,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Text(text = stringResource(id = R.string.query_other_devices))
                 }
             }
+
+            * */
+
         }
-    }
 }
+
+
+@Composable
+fun HeartbeatAnimation(infiniteTransition: InfiniteTransition) {
+    val heartbeatAnimation by infiniteTransition.animateFloat(
+        initialValue = 1f,
+        targetValue = 1.4f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(1500),
+            repeatMode = RepeatMode.Reverse
+        )
+    )
+
+    Image(
+        modifier = Modifier
+            .scale(heartbeatAnimation)
+            .size(90.dp)
+            .padding(top =30.dp)
+            ,
+        painter = painterResource(id = R.drawable.img_heart),
+        contentDescription = "",
+        // colorFilter = ColorFilter.tint(Color.White)
+    )
+}
+
 
 @Preview(device = Devices.WEAR_OS_SMALL_ROUND, showSystemUi = true)
 @Composable
@@ -140,6 +165,8 @@ fun MainAppPreviewEvents() {
         ),
 
         onQueryDevicesThenSendMessage = {},
+        doubleBPM = 61.0
+
         // onQueryMobileCameraClicked = {}
     )
 }
@@ -151,6 +178,7 @@ fun MainAppPreviewEmpty() {
         events = emptyList(),
         //image = null,
         onQueryDevicesThenSendMessage = {},
+        doubleBPM = 61.0
         // onQueryMobileCameraClicked = {}
     )
 }

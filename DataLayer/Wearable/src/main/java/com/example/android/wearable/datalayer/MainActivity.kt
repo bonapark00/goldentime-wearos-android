@@ -22,40 +22,63 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.lifecycle.lifecycleScope
+import androidx.health.services.client.data.DataType
+import androidx.lifecycle.*
 import com.google.android.gms.wearable.CapabilityClient
 import com.google.android.gms.wearable.Node
 import com.google.android.gms.wearable.Wearable
-import kotlinx.coroutines.CancellationException
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collect
 class MainActivity : ComponentActivity() {
-    private val dataClient by lazy { Wearable.getDataClient(this) }
     private val messageClient by lazy { Wearable.getMessageClient(this) }
     private val capabilityClient by lazy { Wearable.getCapabilityClient(this) }
-
     private val clientDataViewModel by viewModels<ClientDataViewModel>()
-
+    private val bpmRepository : BpmRepository = BpmRepository()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        setContent {
-            MainApp(
-                events = clientDataViewModel.events,
-                //image = clientDataViewModel.image,
-                onQueryDevicesThenSendMessage = ::onQueryDevicesThenSendMessage,
-                // onQueryMobileCameraClicked = ::onQueryMobileCameraClicked
-            )
-        }
-        initialize() // start watching BPM
+        var doubleBpm : Double? = 10.0
 
+        lifecycleScope.launch{
+            repeatOnLifecycle(Lifecycle.State.STARTED){
+                bpmRepository.getBPM().collect{value ->
+                    doubleBpm = value
+                    Log.d("HEALTH WATCH", "HH BPM: $value")
+
+                    setContent {
+                        MainApp(
+                            events = clientDataViewModel.events,
+                            //image = clientDataViewModel.image,
+                            onQueryDevicesThenSendMessage = ::onQueryDevicesThenSendMessage,
+                            doubleBPM = doubleBpm
+                            // onQueryMobileCameraClicked = ::onQueryMobileCameraClicked
+                        )
+                    }
+                }
+            }
+        }
+
+
+        fun mman() = runBlocking<Unit> {bpmRepository.getBPM().collect{
+                value ->
+                doubleBpm = value
+                delay(5000)
+            }
+        }
+
+        // mman()
+        bpmRepository.getBPM().asLiveData().map { value -> doubleBpm = value }
+
+        // var doubleBpm : Double? = getBpm().value
+        if(doubleBpm==null){doubleBpm = 58.0}
+        initialize() // start watching BPM
     }
     private fun initialize() {
         val repository = HeartRateRepository(this)
         repository.startWatching()
+
     }
 
     private fun onQueryDevicesThenSendMessage() {
@@ -73,19 +96,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun onQueryMobileCameraClicked() {
-        lifecycleScope.launch {
-            try {
-                val nodes = getCapabilitiesForReachableNodes()
-                    .filterValues { MOBILE_CAPABILITY in it && CAMERA_CAPABILITY in it }.keys
-                displayNodes(nodes)
-            } catch (cancellationException: CancellationException) {
-                throw cancellationException
-            } catch (exception: Exception) {
-                Log.d(TAG, "Querying nodes failed: $exception")
-            }
-        }
-    }
 
     /**
      * Collects the capabilities for all nodes that are reachable using the [CapabilityClient].
@@ -110,15 +120,6 @@ class MainActivity : ComponentActivity() {
             // Transform the capability list for each node into a set
             .mapValues { it.value.toSet() }
 
-    private fun displayNodes(nodes: Set<Node>) {
-        val message = if (nodes.isEmpty()) {
-            getString(R.string.no_device)
-        } else {
-            getString(R.string.connected_nodes, nodes.joinToString(", ") { it.displayName })
-        }
-
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-    }
 
     override fun onResume() {
         super.onResume()
@@ -150,8 +151,6 @@ class MainActivity : ComponentActivity() {
 
     companion object {
         private const val TAG = "MainActivity"
-
-        private const val CAMERA_CAPABILITY = "camera"
         private const val WEAR_CAPABILITY = "wear"
         private const val MOBILE_CAPABILITY = "mobile"
     }
