@@ -1,4 +1,4 @@
-# Wear OS for Golden Time
+# Wear OS for Golden Time ⌚
 ## About
 ---
 Wear OS for Golden Time has been made to assist an Mobile application for Golden Time. It monitors user's body condition and send alert to the application in case of an emergency. We took advantage of high quality data from Health Services.
